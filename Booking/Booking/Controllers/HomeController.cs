@@ -1,4 +1,4 @@
-﻿using Booking.Models;
+using Booking.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
