@@ -1,4 +1,6 @@
-﻿using Booking.Models;
+﻿using AutoMapper;
+using Booking.Models;
+using Booking.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace Booking.Services
@@ -6,57 +8,59 @@ namespace Booking.Services
     public class HotelService
     {
         private readonly BookingContext bookingContext;
-        public HotelService(BookingContext bookingContext)
+        private readonly IMapper mapper;
+        public HotelService(BookingContext bookingContext, IMapper mapper)
         {
             this.bookingContext = bookingContext;
+            this.mapper = mapper;
         }
 
-        public Hotel CreateHotel(Hotel hotel)
+        public HotelDto CreateHotel(HotelDto hotelDto)
         {
-            bookingContext.Hotels.Add(hotel);
+            bookingContext.Hotels.Add(mapper.Map<Hotel>(hotelDto));
             bookingContext.SaveChanges();
-            return hotel;
+            return hotelDto;
         }
 
-        public List<Hotel> GetAllHotels()
+        public List<HotelDto> GetAllHotels()
         {
-            return bookingContext.Hotels.Include(x => x.Rooms).ToList();
+            return mapper.Map<List<HotelDto>>(bookingContext.Hotels.Include(x => x.Rooms).ToList());
         }
 
-        public Hotel GetHotelById(int id)
+        public HotelDto GetHotelById(int id)
         {
-            Hotel hotel = bookingContext.Hotels.Include(x => x.Rooms).FirstOrDefault(hotel => hotel.Id == id);
+            Hotel? hotel = bookingContext.Hotels.Include(x => x.Rooms).FirstOrDefault(hotel => hotel.Id == id);
             if (hotel == null)
             {
                 throw new NullReferenceException("Hotel not found");
             }
-            return hotel;
+            return mapper.Map<HotelDto>(hotel);
         }
 
-        public Hotel UpdateHotel(int id, Hotel updatedHotel)
+        public HotelDto UpdateHotel(int id, HotelDto updatedHotelDto)
         {
-            Hotel hotel = bookingContext.Hotels.Include(x => x.Rooms).FirstOrDefault(hotel => hotel.Id == id);
+            Hotel? hotel = bookingContext.Hotels.Include(x => x.Rooms).FirstOrDefault(hotel => hotel.Id == id);
             if (hotel == null)
             {
                 throw new NullReferenceException("Hotel not found");
             }
-            hotel.Name = updatedHotel.Name;
-            hotel.Latitude = updatedHotel.Latitude;
-            hotel.Longitude = updatedHotel.Longitude;
+            hotel.Name = updatedHotelDto.Name;
+            hotel.Latitude = updatedHotelDto.Latitude;
+            hotel.Longitude = updatedHotelDto.Longitude;
             bookingContext.SaveChanges();
-            return hotel;
+            return mapper.Map<HotelDto>(hotel);
         }
 
-        public Hotel DeleteHotel(int id)
+        public HotelDto DeleteHotel(int id)
         {
-            Hotel hotel = bookingContext.Hotels.Include(x => x.Rooms).FirstOrDefault(hotel => hotel.Id == id);
+            Hotel? hotel = bookingContext.Hotels.Include(x => x.Rooms).FirstOrDefault(hotel => hotel.Id == id);
             if(hotel == null)
             {
                 throw new NullReferenceException("Hotel not found");
             }
             bookingContext.Hotels.Remove(hotel);
             bookingContext.SaveChanges();
-            return hotel;
+            return mapper.Map<HotelDto>(hotel);
         }
     }
 }

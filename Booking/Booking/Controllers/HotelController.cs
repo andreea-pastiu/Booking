@@ -1,6 +1,5 @@
-﻿using Booking.Models;
+﻿using Booking.Models.Dtos;
 using Booking.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Booking.Controllers
@@ -21,7 +20,7 @@ namespace Booking.Controllers
             return Ok(hotelService.GetAllHotels());
         }
 
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public IActionResult GetHotelById(int id) 
         {
             try
@@ -35,17 +34,17 @@ namespace Booking.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateHotel(Hotel hotel)
+        public IActionResult CreateHotel(HotelDto hotelDto)
         {
-            return Ok(hotelService.CreateHotel(hotel));
+            return Ok(hotelService.CreateHotel(hotelDto));
         }
 
-        [HttpPut("/{id}")]
-        public IActionResult UpdateHotel(int id, Hotel updatedHotel)
+        [HttpPut("{id}")]
+        public IActionResult UpdateHotel(int id, HotelDto updatedHotelDto)
         {
             try
             {
-                return Ok(hotelService.UpdateHotel(id, updatedHotel));
+                return Ok(hotelService.UpdateHotel(id, updatedHotelDto));
             }
             catch(NullReferenceException exception)
             {
@@ -53,7 +52,7 @@ namespace Booking.Controllers
             }
         }
 
-        [HttpDelete("/{id}")]
+        [HttpDelete("{id}")]
         public IActionResult DeleteHotel(int id)
         {
             try
